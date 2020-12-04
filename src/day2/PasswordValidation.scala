@@ -1,15 +1,8 @@
 package day2
 
-import scala.io.Source
+import readFile.FileReader
 
 object PasswordValidation extends App {
-  def readFile(filepath: String): Seq[String] = {
-    val bufferedSource = io.Source.fromFile(filepath)
-    val lines = (for (line <- bufferedSource.getLines()) yield line).toList
-    bufferedSource.close
-    lines
-  }
-
   def destructurePasswordEntry(elements: (String, String, String)): (Int, Int, Char, String) = {
     val scope = elements._1.split("-")
     (scope.head.toInt, scope.tail.head.toInt, elements._2.charAt(0), elements._3)
@@ -27,13 +20,13 @@ object PasswordValidation extends App {
     letterMatchesPosition(word, letter, p1) != letterMatchesPosition(word, letter, p2)
   }
 
-  val filepath = System.getProperty("user.dir") + "\\src\\day2\\policy.txt"
-  val listOfPasswords = readFile(filepath)
+  val filepath = "\\day2\\policy.txt"
+  val listOfPasswords = FileReader(filepath)
 
   def countValidPass(passwords: Seq[String], validation: ((String, String, String)) => Boolean): Int = {
     val validByFrequency: Seq[Boolean] = for {
       splitPass <-
-        listOfPasswords
+        passwords
           .map(x =>
             x.split(" ").toList match {
               case List(p1, p2, p3) => validation((p1, p2, p3))
